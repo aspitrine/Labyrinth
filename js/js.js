@@ -10,31 +10,11 @@ window.onload = function(){
     var touch;
     var oldTouch;
     var pause=false;
-    var tabMap = [
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
-        [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0],
-        [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
-        [1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1],
-        [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-        [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-        [1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1],
-        [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
-        [0, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1, 1, 0],
-        [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0],
-        [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        []
-    ];
+    var level=0;
+    var map;
+    if(level==0){
+        map = tabMap;
+    }
     var hero = new Image();
     hero.src = '/img/hero.png';
 
@@ -81,14 +61,14 @@ window.onload = function(){
     },false);
     //draw map
     function drawMap(){
-        for(var i=0;i<tabMap.length;i++)
+        for(var i=0;i<map.length;i++)
         {
-            for(var j=0;j<tabMap[i].length;j++)
+            for(var j=0;j<map[i].length;j++)
             {
                 /* draw Wall */
-                if(tabMap[i][j]==0)
+                if(map[i][j]==0)
                 {
-                    if(tabMap[i][j+1]==tabMap[i][j])
+                    if(map[i][j+1]==map[i][j])
                     {
                         context.beginPath();
                         context.moveTo(j*25,i*25);
@@ -99,7 +79,7 @@ window.onload = function(){
                         context.strokeStyle = 'black';
                         context.stroke();
                     }
-                    if(tabMap[i+1][j]==tabMap[i][j])
+                    if(map[i+1][j]==map[i][j])
                     {
                         context.beginPath();
                         context.moveTo(j*25,i*25);
@@ -112,7 +92,7 @@ window.onload = function(){
                     }
                 }
                 /* draw Heart */
-                else if(tabMap[i][j]==2)
+                else if(map[i][j]==2)
                 {
                     context.beginPath();
                     context.drawImage(hero, 25*j-12.5, 25*i-12.5);
@@ -130,101 +110,101 @@ window.onload = function(){
     function moveHeart(){
         /* right */
         if(touch==1){
-            if(posX>tabMap[0].length){
-                tabMap[posY][posX]=1;
-                tabMap[posY][0]=2;
+            if(posX>map[0].length){
+                map[posY][posX]=1;
+                map[posY][0]=2;
                 oldTouch = touch;
-            }else if(tabMap[posY][posX+1]!=0){
-                tabMap[posY][posX]=1;
-                tabMap[posY][posX+1]=2;
+            }else if(map[posY][posX+1]!=0){
+                map[posY][posX]=1;
+                map[posY][posX+1]=2;
                 oldTouch = touch;
             }else{
-                if(oldTouch==2 && tabMap[posY][posX-1]!=0){
-                    tabMap[posY][posX-1]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==2 && map[posY][posX-1]!=0){
+                    map[posY][posX-1]=2;
+                    map[posY][posX]=1;
                 }
-                if(oldTouch==3 && tabMap[posY+1][posX]!=0){
-                    tabMap[posY+1][posX]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==3 && map[posY+1][posX]!=0){
+                    map[posY+1][posX]=2;
+                    map[posY][posX]=1;
                 }
-                if(oldTouch==4 && tabMap[posY-1][posX]!=0){
-                    tabMap[posY-1][posX]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==4 && map[posY-1][posX]!=0){
+                    map[posY-1][posX]=2;
+                    map[posY][posX]=1;
                 }
             }
         }
         /* left */
         if(touch==2){
             if(posX<=0){
-                tabMap[posY][posX]=1;
-                tabMap[posY][tabMap[0].length]=2;
+                map[posY][posX]=1;
+                map[posY][map[0].length]=2;
                 oldTouch = touch;
-            }else if(tabMap[posY][posX-1]!=0){
-                tabMap[posY][posX]=1;
-                tabMap[posY][posX-1]=2;
+            }else if(map[posY][posX-1]!=0){
+                map[posY][posX]=1;
+                map[posY][posX-1]=2;
                 oldTouch = touch;
             }else{
-                if(oldTouch==1 && tabMap[posY][posX+1]!=0){
-                    tabMap[posY][posX+1]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==1 && map[posY][posX+1]!=0){
+                    map[posY][posX+1]=2;
+                    map[posY][posX]=1;
                 }
-                if(oldTouch==3 && tabMap[posY+1][posX]!=0){
-                    tabMap[posY+1][posX]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==3 && map[posY+1][posX]!=0){
+                    map[posY+1][posX]=2;
+                    map[posY][posX]=1;
                 }
-                if(oldTouch==4 && tabMap[posY-1][posX]!=0){
-                    tabMap[posY-1][posX]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==4 && map[posY-1][posX]!=0){
+                    map[posY-1][posX]=2;
+                    map[posY][posX]=1;
                 }
             }
         }
         /* bot */
         if(touch==3){
-            if(posY>=tabMap.length-2){
-                tabMap[posY][posX]=1;
-                tabMap[0][posX]=2;
+            if(posY>=map.length-2){
+                map[posY][posX]=1;
+                map[0][posX]=2;
                 oldTouch = touch;
-            }else if(tabMap[posY+1][posX]!=0){
-                tabMap[posY][posX]=1;
-                tabMap[posY+1][posX]=2;
+            }else if(map[posY+1][posX]!=0){
+                map[posY][posX]=1;
+                map[posY+1][posX]=2;
                 oldTouch = touch;
             }else{
-                if(oldTouch==1 && tabMap[posY][posX+1]!=0){
-                    tabMap[posY][posX+1]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==1 && map[posY][posX+1]!=0){
+                    map[posY][posX+1]=2;
+                    map[posY][posX]=1;
                 }
-                if(oldTouch==2 && tabMap[posY][posX-1]!=0){
-                    tabMap[posY][posX-1]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==2 && map[posY][posX-1]!=0){
+                    map[posY][posX-1]=2;
+                    map[posY][posX]=1;
                 }
-                if(oldTouch==4 && tabMap[posY-1][posX]!=0){
-                    tabMap[posY-1][posX]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==4 && map[posY-1][posX]!=0){
+                    map[posY-1][posX]=2;
+                    map[posY][posX]=1;
                 }
             }
         }
         /* up */
         if(touch==4){
             if(posY==0){
-                tabMap[posY][posX]=1;
-                tabMap[tabMap.length-1][posX]=2;
+                map[posY][posX]=1;
+                map[map.length-1][posX]=2;
                 oldTouch = touch;
-            }else if(tabMap[posY-1][posX]!=0){
-                tabMap[posY][posX]=1;
-                tabMap[posY-1][posX]=2;
+            }else if(map[posY-1][posX]!=0){
+                map[posY][posX]=1;
+                map[posY-1][posX]=2;
                 oldTouch = touch;
             }else{
-                if(oldTouch==1 && tabMap[posY][posX+1]!=0){
-                    tabMap[posY][posX+1]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==1 && map[posY][posX+1]!=0){
+                    map[posY][posX+1]=2;
+                    map[posY][posX]=1;
                 }
-                if(oldTouch==2 && tabMap[posY][posX-1]!=0){
-                    tabMap[posY][posX-1]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==2 && map[posY][posX-1]!=0){
+                    map[posY][posX-1]=2;
+                    map[posY][posX]=1;
                 }
-                if(oldTouch==3 && tabMap[posY+1][posX]!=0){
-                    tabMap[posY+1][posX]=2;
-                    tabMap[posY][posX]=1;
+                if(oldTouch==3 && map[posY+1][posX]!=0){
+                    map[posY+1][posX]=2;
+                    map[posY][posX]=1;
                 }
             }
         }
@@ -235,6 +215,6 @@ window.onload = function(){
         context.clearRect(0, 0, canvas.width, canvas.height);
         moveHeart();
         drawMap();
-        console.log(tabMap.length-1);
+        console.log(map.length-1);
     }
 }
