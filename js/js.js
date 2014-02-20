@@ -228,6 +228,7 @@ window.onload = function(){
         }else if(level==2){
             map = tabMap2;
             mapItem = tabMapILevel2;
+            replaceHero();
         }
     }
 
@@ -246,6 +247,10 @@ window.onload = function(){
         if(bool==false){
             level++;
         }
+    }
+
+    function replaceHero(){
+        map[posY][posX]==2;
     }
 
     function win(){
@@ -268,11 +273,13 @@ window.onload = function(){
         /* delete all draw */
         context.clearRect(0, 0, canvas.width, canvas.height);
         allLevel();
+
         moveHeart();
         drawMap();
-        pickItem();
         noItem();
+        pickItem();
         win();
-        console.log(level);
+
+        console.log("posX : "+posX+" posY : "+posY+" hero : "+map[posY][posX]);
     }
 }
