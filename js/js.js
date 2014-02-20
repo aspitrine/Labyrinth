@@ -10,13 +10,15 @@ window.onload = function(){
     var touch;
     var oldTouch;
     var pause=false;
-    var level=0;
-    var map;
-    if(level==0){
-        map = tabMap;
-    }
+    var level = 1;
+    var levelMax = 3;
+    var map = tabMap;
+    var mapItem = tabMapILevel1;
+
     var hero = new Image();
-    hero.src = '/img/hero.png';
+    hero.src = '/img/hero/hero.png';
+    var item = new Image();
+    item.src = '/img/item/item.png';
 
     var interval = setInterval(animate, 60);
 
@@ -88,7 +90,6 @@ window.onload = function(){
                         context.fill();
                         context.strokeStyle = 'black';
                         context.stroke();
-
                     }
                 }
                 /* draw Heart */
@@ -100,9 +101,13 @@ window.onload = function(){
 
                     posX=j;
                     posY=i;
-
                 }
-
+                /* draw Item */
+                if(mapItem[i][j]==1){
+                    context.beginPath();
+                    context.drawImage(item, 25*j-12.5, 25*i-12.5);
+                    context.stroke();
+                }
             }
         }
     }
@@ -210,11 +215,64 @@ window.onload = function(){
         }
     }
 
+    function pickItem(){
+        if(mapItem[posY][posX]==1){
+            mapItem[posY][posX]=0;
+        }
+    }
+
+    function allLevel(){
+        if(level==1){
+            map = tabMap;
+            mapItem = tabMapILevel1;
+        }else if(level==2){
+            map = tabMap2;
+            mapItem = tabMapILevel2;
+        }
+    }
+
+    function noItem(){
+        var bool=false;
+        for(var i=0;i<mapItem.length;i++)
+        {
+            for(var j=0;j<mapItem[i].length;j++)
+            {
+                if(mapItem[i][j]==1)
+                {
+                    bool=true;
+                }
+            }
+        }
+        if(bool==false){
+            level++;
+        }
+    }
+
+    function win(){
+        if(level==levelMax){
+            clearInterval(interval);
+            context.beginPath();
+            context.rect(0,0,canvas.width, canvas.height);
+            context.fillStyle = "rgba(0, 0, 0, 0.27)";
+            context.fill();
+            context.strokeStyle = "rgba(0, 0, 0, 0.27)";
+            context.stroke();
+            context.font = "12pt helvetica";
+            context.fillStyle = "red";
+            context.strokeStyle = "red";
+            context.fillText("Vous avez gagner", 50, 157);
+        }
+    }
+
     function animate(){
         /* delete all draw */
         context.clearRect(0, 0, canvas.width, canvas.height);
+        allLevel();
         moveHeart();
         drawMap();
-        console.log(map.length-1);
+        pickItem();
+        noItem();
+        win();
+        console.log(level);
     }
 }
